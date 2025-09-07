@@ -12,14 +12,14 @@ import backend from '~backend/client';
 import { formatCurrency } from '../utils/formatting';
 
 const statusOptions = [
-  { value: '', label: 'All Status' },
+  { value: 'all', label: 'All Status' },
   { value: 'UNPAID', label: 'Unpaid' },
   { value: 'PARTIAL', label: 'Partial' },
   { value: 'PAID', label: 'Paid' },
 ];
 
 const classOptions = [
-  { value: '', label: 'All Classes' },
+  { value: 'all', label: 'All Classes' },
   { value: '10-A', label: '10-A' },
   { value: '10-B', label: '10-B' },
   { value: '11-A', label: '11-A' },
@@ -30,9 +30,9 @@ const classOptions = [
 
 export default function InvoicesPage() {
   const [filters, setFilters] = useState({
-    class: '',
+    class: 'all',
     month: '',
-    status: '',
+    status: 'all',
     q: '',
   });
   const [showGenerateForm, setShowGenerateForm] = useState(false);
@@ -41,7 +41,14 @@ export default function InvoicesPage() {
 
   const { data: invoicesData, isLoading } = useQuery({
     queryKey: ['invoices', filters],
-    queryFn: () => backend.fees.listInvoices(filters),
+    queryFn: () => {
+      const apiFilters: any = {};
+      if (filters.class !== 'all') apiFilters.class = filters.class;
+      if (filters.month) apiFilters.month = filters.month;
+      if (filters.status !== 'all') apiFilters.status = filters.status;
+      if (filters.q) apiFilters.q = filters.q;
+      return backend.fees.listInvoices(apiFilters);
+    },
   });
 
   const generateMutation = useMutation({

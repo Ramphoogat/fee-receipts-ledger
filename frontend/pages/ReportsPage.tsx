@@ -10,7 +10,7 @@ import backend from '~backend/client';
 import { formatCurrency } from '../utils/formatting';
 
 const classOptions = [
-  { value: '', label: 'All Classes' },
+  { value: 'all', label: 'All Classes' },
   { value: '10-A', label: '10-A' },
   { value: '10-B', label: '10-B' },
   { value: '11-A', label: '11-A' },
@@ -22,12 +22,17 @@ const classOptions = [
 export default function ReportsPage() {
   const [filters, setFilters] = useState({
     month: '',
-    class: '',
+    class: 'all',
   });
 
   const { data: reportData, isLoading } = useQuery({
     queryKey: ['reports', filters],
-    queryFn: () => backend.fees.getReports(filters),
+    queryFn: () => {
+      const apiFilters: any = {};
+      if (filters.month) apiFilters.month = filters.month;
+      if (filters.class !== 'all') apiFilters.class = filters.class;
+      return backend.fees.getReports(apiFilters);
+    },
   });
 
   const handleFilterChange = (key: string, value: string) => {
@@ -38,7 +43,7 @@ export default function ReportsPage() {
     if (!reportData) return;
 
     const csvContent = [
-      ['Summary Report - ' + (filters.month || 'All Months') + ' - ' + (filters.class || 'All Classes')],
+      ['Summary Report - ' + (filters.month || 'All Months') + ' - ' + (filters.class === 'all' ? 'All Classes' : filters.class)],
       [''],
       ['Metric', 'Amount'],
       ['Total Billed', reportData.summary.total_billed.toString()],
