@@ -2,7 +2,8 @@ import React from 'react';
 import { Printer } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import type { ReceiptData } from '../types/api';
-import { formatCurrency, formatDate } from '../utils/formatting';
+import { formatDate } from '../utils/formatting';
+import { useCurrency } from '../utils/currency';
 
 interface ReceiptPrintProps {
   receipt: ReceiptData;
@@ -10,6 +11,8 @@ interface ReceiptPrintProps {
 }
 
 export default function ReceiptPrint({ receipt, onPrint }: ReceiptPrintProps) {
+  const { formatCurrency } = useCurrency();
+
   const handlePrint = () => {
     window.print();
     onPrint?.();

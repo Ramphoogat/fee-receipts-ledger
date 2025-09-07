@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Plus, Download, Search } from 'lucide-react';
+import { Plus, Download, Search, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -10,6 +10,7 @@ import InvoiceTable from '../components/InvoiceTable';
 import GenerateInvoicesForm from '../components/GenerateInvoicesForm';
 import backend from '~backend/client';
 import { formatCurrency } from '../utils/formatting';
+import { useCurrency } from '../utils/currency';
 
 const statusOptions = [
   { value: 'all', label: 'All Status' },
@@ -20,6 +21,17 @@ const statusOptions = [
 
 const classOptions = [
   { value: 'all', label: 'All Classes' },
+  { value: 'Pre-Nursery', label: 'Pre-Nursery' },
+  { value: 'Nursery', label: 'Nursery' },
+  { value: '1', label: 'Class 1' },
+  { value: '2', label: 'Class 2' },
+  { value: '3', label: 'Class 3' },
+  { value: '4', label: 'Class 4' },
+  { value: '5', label: 'Class 5' },
+  { value: '6', label: 'Class 6' },
+  { value: '7', label: 'Class 7' },
+  { value: '8', label: 'Class 8' },
+  { value: '9', label: 'Class 9' },
   { value: '10-A', label: '10-A' },
   { value: '10-B', label: '10-B' },
   { value: '11-A', label: '11-A' },
@@ -36,8 +48,10 @@ export default function InvoicesPage() {
     q: '',
   });
   const [showGenerateForm, setShowGenerateForm] = useState(false);
+  const [showCurrencySettings, setShowCurrencySettings] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { currency, setCurrency, formatCurrency: formatCurrencyWithSelected, currencyOptions } = useCurrency();
 
   const { data: invoicesData, isLoading } = useQuery({
     queryKey: ['invoices', filters],
@@ -87,23 +101,62 @@ export default function InvoicesPage() {
           <h1 className="text-2xl font-bold text-gray-900">Fee Invoices</h1>
           <p className="text-gray-600">Manage student fee invoices and payments</p>
         </div>
-        <Dialog open={showGenerateForm} onOpenChange={setShowGenerateForm}>
-          <DialogTrigger asChild>
-            <Button className="flex items-center space-x-2">
-              <Plus className="h-4 w-4" />
-              <span>Generate Invoices</span>
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-md">
-            <DialogHeader>
-              <DialogTitle>Generate Invoices</DialogTitle>
-            </DialogHeader>
-            <GenerateInvoicesForm
-              onSubmit={(data) => generateMutation.mutate(data)}
-              isLoading={generateMutation.isPending}
-            />
-          </DialogContent>
-        </Dialog>
+        <div className="flex items-center space-x-2">
+          <Dialog open={showCurrencySettings} onOpenChange={setShowCurrencySettings}>
+            <DialogTrigger asChild>
+              <Button variant="outline" size="sm">
+                <Settings className="h-4 w-4 mr-2" />
+                Currency ({currency})
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-md">
+              <DialogHeader>
+                <DialogTitle>Currency Settings</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Select Currency
+                  </label>
+                  <Select value={currency} onValueChange={setCurrency}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {currencyOptions.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="flex justify-end">
+                  <Button onClick={() => setShowCurrencySettings(false)}>
+                    Done
+                  </Button>
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
+          <Dialog open={showGenerateForm} onOpenChange={setShowGenerateForm}>
+            <DialogTrigger asChild>
+              <Button className="flex items-center space-x-2">
+                <Plus className="h-4 w-4" />
+                <span>Generate Invoices</span>
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-md">
+              <DialogHeader>
+                <DialogTitle>Generate Invoices</DialogTitle>
+              </DialogHeader>
+              <GenerateInvoicesForm
+                onSubmit={(data) => generateMutation.mutate(data)}
+                isLoading={generateMutation.isPending}
+              />
+            </DialogContent>
+          </Dialog>
+        </div>
       </div>
 
       <div className="bg-white p-4 rounded-lg shadow space-y-4">
@@ -175,19 +228,19 @@ export default function InvoicesPage() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div className="text-center">
               <div className="text-2xl font-bold text-blue-600">
-                {formatCurrency(invoicesData.billed_sum)}
+                {formatCurrencyWithSelected(invoicesData.billed_sum)}
               </div>
               <div className="text-sm text-gray-600">Total Billed</div>
             </div>
             <div className="text-center">
               <div className="text-2xl font-bold text-green-600">
-                {formatCurrency(invoicesData.paid_sum)}
+                {formatCurrencyWithSelected(invoicesData.paid_sum)}
               </div>
               <div className="text-sm text-gray-600">Total Collected</div>
             </div>
             <div className="text-center">
               <div className="text-2xl font-bold text-red-600">
-                {formatCurrency(invoicesData.balance_sum)}
+                {formatCurrencyWithSelected(invoicesData.balance_sum)}
               </div>
               <div className="text-sm text-gray-600">Outstanding</div>
             </div>

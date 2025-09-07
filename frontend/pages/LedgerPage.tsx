@@ -6,11 +6,13 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import backend from '~backend/client';
-import { formatCurrency, formatDate } from '../utils/formatting';
+import { formatDate } from '../utils/formatting';
+import { useCurrency } from '../utils/currency';
 
 export default function LedgerPage() {
   const { studentId } = useParams<{ studentId: string }>();
   const navigate = useNavigate();
+  const { formatCurrency } = useCurrency();
 
   const { data: ledger, isLoading } = useQuery({
     queryKey: ['ledger', studentId],

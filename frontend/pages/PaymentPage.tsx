@@ -11,7 +11,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { useToast } from '@/components/ui/use-toast';
 import ReceiptPrint from '../components/ReceiptPrint';
 import backend from '~backend/client';
-import { formatCurrency, formatDate } from '../utils/formatting';
+import { formatDate } from '../utils/formatting';
+import { useCurrency } from '../utils/currency';
 
 const paymentModes = [
   { value: 'CASH', label: 'Cash' },
@@ -25,6 +26,7 @@ export default function PaymentPage() {
   const { invoiceId } = useParams<{ invoiceId: string }>();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { formatCurrency } = useCurrency();
   
   const [paymentData, setPaymentData] = useState({
     amount: '',

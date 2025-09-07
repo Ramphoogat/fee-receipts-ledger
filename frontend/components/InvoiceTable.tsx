@@ -4,7 +4,8 @@ import { CreditCard, FileText, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import type { Invoice } from '../types/api';
-import { formatCurrency, formatDate } from '../utils/formatting';
+import { formatDate } from '../utils/formatting';
+import { useCurrency } from '../utils/currency';
 
 interface InvoiceTableProps {
   invoices: Invoice[];
@@ -19,6 +20,8 @@ const statusColors = {
 };
 
 export default function InvoiceTable({ invoices, isLoading }: InvoiceTableProps) {
+  const { formatCurrency } = useCurrency();
+
   if (isLoading) {
     return (
       <div className="bg-white rounded-lg shadow">
