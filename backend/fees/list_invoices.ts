@@ -71,9 +71,9 @@ export const listInvoices = api<ListInvoicesRequest, ListInvoicesResponse>(
     const summaryQuery = `
       SELECT 
         COUNT(*) as total,
-        COALESCE(SUM(i.billed_total), 0) as billed_sum,
-        COALESCE(SUM(i.paid_total), 0) as paid_sum,
-        COALESCE(SUM(i.balance), 0) as balance_sum
+        COALESCE(SUM(i.billed_total)::DOUBLE PRECISION, 0) as billed_sum,
+        COALESCE(SUM(i.paid_total)::DOUBLE PRECISION, 0) as paid_sum,
+        COALESCE(SUM(i.balance)::DOUBLE PRECISION, 0) as balance_sum
       FROM invoices i
       JOIN students s ON i.student_id = s.id
       ${whereClause}
@@ -95,9 +95,9 @@ export const listInvoices = api<ListInvoicesRequest, ListInvoicesResponse>(
         s.roll_no as student_roll,
         i.class,
         i.month,
-        i.billed_total,
-        i.paid_total,
-        i.balance,
+        i.billed_total::DOUBLE PRECISION as billed_total,
+        i.paid_total::DOUBLE PRECISION as paid_total,
+        i.balance::DOUBLE PRECISION as balance,
         i.status,
         i.created_at
       FROM invoices i

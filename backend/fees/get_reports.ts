@@ -52,9 +52,9 @@ export const getReports = api<ReportsRequest, FeeReportData>(
     // Get overall summary
     const summaryQuery = `
       SELECT 
-        COALESCE(SUM(i.billed_total), 0) as total_billed,
-        COALESCE(SUM(i.paid_total), 0) as total_collected,
-        COALESCE(SUM(i.balance), 0) as total_outstanding
+        COALESCE(SUM(i.billed_total)::DOUBLE PRECISION, 0) as total_billed,
+        COALESCE(SUM(i.paid_total)::DOUBLE PRECISION, 0) as total_collected,
+        COALESCE(SUM(i.balance)::DOUBLE PRECISION, 0) as total_outstanding
       FROM invoices i
       ${whereClause}
     `;
@@ -69,9 +69,9 @@ export const getReports = api<ReportsRequest, FeeReportData>(
     const byClassQuery = `
       SELECT 
         i.class,
-        COALESCE(SUM(i.billed_total), 0) as billed,
-        COALESCE(SUM(i.paid_total), 0) as collected,
-        COALESCE(SUM(i.balance), 0) as outstanding,
+        COALESCE(SUM(i.billed_total)::DOUBLE PRECISION, 0) as billed,
+        COALESCE(SUM(i.paid_total)::DOUBLE PRECISION, 0) as collected,
+        COALESCE(SUM(i.balance)::DOUBLE PRECISION, 0) as outstanding,
         COUNT(DISTINCT i.student_id) as student_count
       FROM invoices i
       ${whereClause}
@@ -111,17 +111,17 @@ export const getReports = api<ReportsRequest, FeeReportData>(
       const byHeadQuery = `
         SELECT 
           ii.head_name,
-          COALESCE(SUM(ii.amount), 0) as billed,
+          COALESCE(SUM(ii.amount)::DOUBLE PRECISION, 0) as billed,
           COALESCE(SUM(
             CASE WHEN i.paid_total > 0 THEN 
               LEAST(ii.amount, (ii.amount / i.billed_total) * i.paid_total)
             ELSE 0 END
-          ), 0) as collected,
+          )::DOUBLE PRECISION, 0) as collected,
           COALESCE(SUM(
             CASE WHEN i.balance > 0 THEN 
               LEAST(ii.amount, (ii.amount / i.billed_total) * i.balance)
             ELSE 0 END
-          ), 0) as outstanding
+          )::DOUBLE PRECISION, 0) as outstanding
         FROM invoice_items ii
         JOIN invoices i ON ii.invoice_id = i.id
         ${headWhereClause}

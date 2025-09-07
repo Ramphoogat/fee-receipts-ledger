@@ -51,7 +51,7 @@ export const getReceipt = api<{ payment_id: number }, ReceiptData>(
       SELECT 
         p.id as payment_id,
         p.receipt_no,
-        p.amount,
+        p.amount::DOUBLE PRECISION as amount,
         p.mode,
         p.txn_ref,
         p.paid_on,
@@ -61,9 +61,9 @@ export const getReceipt = api<{ payment_id: number }, ReceiptData>(
         s.class as student_class,
         i.id as invoice_id,
         i.month as invoice_month,
-        i.billed_total,
-        i.paid_total,
-        i.balance
+        i.billed_total::DOUBLE PRECISION as billed_total,
+        i.paid_total::DOUBLE PRECISION as paid_total,
+        i.balance::DOUBLE PRECISION as balance
       FROM payments p
       JOIN invoices i ON p.invoice_id = i.id
       JOIN students s ON i.student_id = s.id
@@ -79,7 +79,7 @@ export const getReceipt = api<{ payment_id: number }, ReceiptData>(
       head_name: string;
       amount: number;
     }>`
-      SELECT head_name, amount
+      SELECT head_name, amount::DOUBLE PRECISION as amount
       FROM invoice_items
       WHERE invoice_id = ${receipt.invoice_id}
       ORDER BY head_name

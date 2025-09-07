@@ -58,7 +58,7 @@ export const getLedger = api<{ student_id: number }, LedgerResponse>(
         'INVOICE' as type,
         i.created_at as date,
         'Invoice for ' || i.month as description,
-        i.billed_total as amount,
+        i.billed_total::DOUBLE PRECISION as amount,
         'INV-' || i.id as reference,
         i.id as invoice_id,
         null as payment_id
@@ -71,7 +71,7 @@ export const getLedger = api<{ student_id: number }, LedgerResponse>(
         'PAYMENT' as type,
         p.paid_on as date,
         'Payment - ' || p.mode || CASE WHEN p.txn_ref IS NOT NULL THEN ' (' || p.txn_ref || ')' ELSE '' END as description,
-        -p.amount as amount,
+        -p.amount::DOUBLE PRECISION as amount,
         p.receipt_no as reference,
         p.invoice_id,
         p.id as payment_id
