@@ -1,0 +1,101 @@
+@media print {
+  @page {
+    size: A4;
+    margin: 0.5in;
+  }
+
+  .receipt-print {
+    max-width: 100%;
+    font-size: 12px;
+    line-height: 1.4;
+  }
+
+  .receipt-print h1 {
+    font-size: 18px;
+    margin-bottom: 8px;
+  }
+
+  .receipt-print h2 {
+    font-size: 16px;
+    margin: 12px 0 8px 0;
+  }
+
+  .receipt-print h3 {
+    font-size: 14px;
+    margin: 8px 0 4px 0;
+  }
+
+  .receipt-print table {
+    font-size: 11px;
+  }
+
+  .receipt-print .grid {
+    display: block;
+  }
+
+  .receipt-print .grid > div {
+    margin-bottom: 8px;
+  }
+
+  /* Thermal receipt styles */
+  @page thermal {
+    size: 80mm auto;
+    margin: 0;
+  }
+
+  .thermal-receipt {
+    width: 80mm;
+    font-family: 'Courier New', monospace;
+    font-size: 10px;
+    line-height: 1.2;
+    padding: 2mm;
+  }
+
+  .thermal-receipt .text-center {
+    text-align: center;
+  }
+
+  .thermal-receipt .text-right {
+    text-align: right;
+  }
+
+  .thermal-receipt .border-t {
+    border-top: 1px dashed #000;
+    margin: 4px 0;
+    padding-top: 4px;
+  }
+
+  .thermal-receipt .border-b {
+    border-bottom: 1px dashed #000;
+    margin: 4px 0;
+    padding-bottom: 4px;
+  }
+
+  .thermal-receipt table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .thermal-receipt td,
+  .thermal-receipt th {
+    padding: 1px 2px;
+    font-size: 9px;
+  }
+
+  /* Hide elements that shouldn't print */
+  .print\\:hidden {
+    display: none !important;
+  }
+
+  /* Show only print elements */
+  body > *:not(.receipt-print):not(.thermal-receipt) {
+    display: none !important;
+  }
+
+  /* Override any background colors for printing */
+  * {
+    background: white !important;
+    color: black !important;
+    box-shadow: none !important;
+  }
+}
